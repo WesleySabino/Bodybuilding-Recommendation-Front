@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
+import { useLogin } from '@/features/auth/model/use-login';
 
 const schema = z.object({
   email: z.string().email('Enter a valid email.'),
@@ -18,10 +19,9 @@ export function LoginForm() {
     resolver: zodResolver(schema),
     defaultValues: { email: '', password: '' },
   });
+  const loginMutation = useLogin();
 
-  const onSubmit = () => {
-    // TODO: integrate with API auth endpoint.
-  };
+  const onSubmit = (values: FormValues) => loginMutation.mutate(values);
 
   return (
     <Card className="w-full p-6">
@@ -35,8 +35,9 @@ export function LoginForm() {
           {...form.register('password')}
         />
         {form.formState.errors.password && <p className="text-sm text-red-500">{form.formState.errors.password.message}</p>}
-        <Button className="w-full" type="submit">
-          Sign in
+        {loginMutation.isError && <p className="text-sm text-red-500">Unable to authenticate. Please try again.</p>}
+        <Button className="w-full" type="submit" disabled={loginMutation.isPending}>
+          {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
         </Button>
       </form>
     </Card>
