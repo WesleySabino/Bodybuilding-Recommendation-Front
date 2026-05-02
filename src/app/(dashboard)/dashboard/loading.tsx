@@ -1,3 +1,5 @@
+import { Skeleton } from '@/shared/components/ui/skeleton';
+
 export default function DashboardLoading() {
-  return <div className="h-64 animate-pulse rounded-lg bg-muted" />;
+  return <Skeleton className="h-64 w-full" />;
 }
